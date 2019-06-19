@@ -1,0 +1,11 @@
+#!/bin/bash
+
+read -p "Which server would you like to connect?
+server1
+server2[username password hostname]" answer answer1 answer2 answer3
+case $answer in
+	server1) sshpass -p yourPassword ssh yourUsername@yourHostname
+	;;
+	server2) sshpass -p $answer2 ssh $answer1@$answer3
+	;;
+esac

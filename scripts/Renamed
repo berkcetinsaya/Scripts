@@ -1,0 +1,11 @@
+#!/bin/bash
+    echo "Which string would you like to change: "
+    read first
+    echo "Enter the new string to change: "
+    read second
+    echo "In which file: "
+    read file
+    while read line
+    do
+        echo ${line//$first/$second}
+    done < $file
