@@ -1,0 +1,15 @@
+#!/bin/bash
+
+SERVICE='tor'
+if ps ax|tr -s " "| cut -d " " -f5,6 | grep -w $SERVICE > /dev/null
+then
+	echo "$SERVICE service is running. Stopping..."
+	networksetup -setsocksfirewallproxystate Wi-Fi off
+	echo "SOCKS proxy off."
+	sudo killall tor
+else
+    echo "$SERVICE is not running.Starting..."
+    networksetup -setsocksfirewallproxystate Wi-Fi on
+	echo "SOCKS proxy on."
+	tor&
+fi

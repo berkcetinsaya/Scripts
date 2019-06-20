@@ -1,0 +1,105 @@
+#!/bin/bash
+
+function Time(){
+    watch -n1 "date '+%D%n%r'|figlet"
+}
+
+function Tor(){
+    SERVICE='tor'
+    if ps ax|tr -s " "| cut -d " " -f5,6 | grep -w $SERVICE > /dev/null
+    then
+        echo "$SERVICE service is running. Stopping..."
+        networksetup -setsocksfirewallproxystate Wi-Fi off
+        echo "SOCKS proxy off."
+        sudo killall tor
+    else
+        echo "$SERVICE is not running.Starting..."
+        networksetup -setsocksfirewallproxystate Wi-Fi on
+        echo "SOCKS proxy on."
+        tor&
+    fi
+}
+
+function SocksIO(){
+    networksetup -setsocksfirewallproxystate Wi-Fi "$1"
+    echo "SOCKS proxy \"$1\"."
+        
+}
+
+function InitializeServer(){
+	read -p "Enter username hostname:
+    " answer1 answer2
+	ssh $answer1@$answer2
+}
+
+function ConnectToServer()
+{
+	read -p "Enter username password hostname:
+    " answer1 answer2 answer3
+	sshpass -p $answer2 ssh $answer1@$answer3
+}
+
+function ConnectToServerWithTor(){
+    SERVICE='tor'
+    if ps ax|tr -s " "| cut -d " " -f6 | grep -w $SERVICE > /dev/null
+    then
+        echo "$SERVICE service is running."
+        ConnectToServer
+    else
+        echo "$SERVICE is not running. Starting..."
+        networksetup -setsocksfirewallproxystate Wi-Fi on
+        echo "SOCKS proxy on."
+        tor&
+        sleep 10
+        ConnectToServer
+    fi
+}
+
+function Renamed(){
+    echo "Which string would you like to change: "
+    read first
+    echo "Enter the new string to change: "
+    read second
+    echo "In which file: "
+    read file
+    filename=$(basename -- "$file")
+    extension="${filename##*.}"
+    filename="${filename%.*}"
+    while read line
+    do
+        echo ${line//$first/$second} >> $filename"new."$extension    
+    done < $file
+    
+}
+
+function All()
+{
+	read -p "Which function would you like to use?
+    1) Time
+    2) Tor
+    3) Socks [on/off]
+    4) Initialize Server with SSH
+    5) Connect to a server (If it is the first time, execute 4)
+    6) Connect to a server with Tor (If it is the first time, execute 4)
+    7) Word Replacement
+    " answer1 answer2 answer3
+	case $answer1 in
+		1) Time
+		;;
+		2) Tor
+		;;
+        3) SocksIO $answer2
+		;;
+        4) InitializeServer
+        ;;
+        5) ConnectToServer
+        ;;
+        6) ConnectToServerWithTor
+        ;;
+        7) Renamed
+        ;;
+        
+	esac
+}
+
+All
