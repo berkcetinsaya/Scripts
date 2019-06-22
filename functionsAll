@@ -32,8 +32,7 @@ function InitializeServer(){
 	ssh $answer1@$answer2
 }
 
-function ConnectToServer()
-{
+function ConnectToServer(){
 	read -p "Enter username password hostname:
     " answer1 answer2 answer3
 	sshpass -p $answer2 ssh $answer1@$answer3
@@ -68,12 +67,10 @@ function Renamed(){
     while read line
     do
         echo ${line//$first/$second} >> $filename"new."$extension    
-    done < $file
-    
+    done < $file    
 }
 
-function All()
-{
+function All(){
 	read -p "Which function would you like to use?
     1) Time
     2) Tor
